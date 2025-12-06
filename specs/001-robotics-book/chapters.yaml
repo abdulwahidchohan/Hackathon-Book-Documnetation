@@ -1,0 +1,104 @@
+chapters:
+  - id: 00
+    title: "Preface & Scope"
+    description: "Overview of the book's purpose, target audience, and what it aims to cover."
+    acceptance_tests:
+      - "Clearly defines the book's scope and limitations."
+      - "Introduces the Spec-Driven Development (SDD) approach for robotics."
+      - "Outlines the structure of the book."
+
+  - id: 01
+    title: "Introduction to AI Humanoid Robotics"
+    description: "Foundational concepts of humanoid robotics, history, and key challenges."
+    acceptance_tests:
+      - "Explains the evolution of humanoid robotics."
+      - "Discusses current state-of-the-art humanoid robots."
+      - "Identifies key challenges in humanoid robotics (e.g., balance, manipulation, human interaction)."
+
+  - id: 02
+    title: "AI Fundamentals for Robotics (ML/DL, inference on edge)"
+    description: "Core AI/ML/DL concepts relevant to robotics, with a focus on edge deployment."
+    acceptance_tests:
+      - "Covers essential ML/DL techniques (e.g., neural networks, reinforcement learning)."
+      - "Explains how AI models are optimized for edge inference in robotics."
+      - "Provides examples of AI application in robotics (e.g., object recognition, navigation)."
+
+  - id: 03
+    title: "Humanoid Hardware & Sensors (motors, actuators, IMUs, F/T sensors)"
+    description: "Detailed examination of humanoid robot hardware components and sensing modalities."
+    acceptance_tests:
+      - "Describes various types of motors and actuators used in humanoids."
+      - "Explains the function and importance of IMUs, force/torque sensors, and other key sensors."
+      - "Discusses sensor integration and data acquisition challenges."
+
+  - id: 04
+    title: "Perception & State Estimation (vision, SLAM, sensor fusion)"
+    description: "Techniques for robot perception, environmental understanding, and state estimation."
+    acceptance_tests:
+      - "Covers computer vision techniques for object detection and tracking."
+      - "Explains Simultaneous Localization and Mapping (SLAM) for environment mapping."
+      - "Discusses sensor fusion methods for robust state estimation."
+
+  - id: 05
+    title: "Motion Planning & Control (kinematics, dynamics, MPC/trajectory)"
+    description: "Algorithms for generating and executing robot movements, including kinematics and dynamics."
+    acceptance_tests:
+      - "Explains forward and inverse kinematics for humanoid robots."
+      - "Discusses robot dynamics and control strategies (e.g., PID, whole-body control)."
+      - "Covers trajectory generation and optimization techniques."
+
+  - id: 06
+    title: "Language, Multimodal & Cognitive Models (LLMs, VLMs for planning/control)"
+    description: "Integration of advanced AI models like LLMs and VLMs for higher-level cognitive functions."
+    acceptance_tests:
+      - "Explores how LLMs/VLMs enhance robot planning and decision-making."
+      - "Provides examples of multimodal interaction with humanoids."
+      - "Discusses challenges and future directions in cognitive robotics."
+
+  - id: 07
+    title: "AI‑Native Software Development (spec-driven dev, testing, CI/CD)"
+    description: "Modern software development practices tailored for AI-powered robotics systems."
+    acceptance_tests:
+      - "Details spec-driven development workflows for robotics."
+      - "Covers testing strategies, including simulation-based testing."
+      - "Explains CI/CD pipelines for robotics software deployment."
+
+  - id: 08
+    title: "Simulation & Tooling (Gazebo, Isaac Sim, PyBullet; dataset generation)"
+    description: "Overview of robotics simulation platforms and tools for development and data generation."
+    acceptance_tests:
+      - "Compares and contrasts popular robotics simulators (Gazebo, Isaac Sim, PyBullet)."
+      - "Explains how simulation is used for dataset generation and training."
+      - "Provides guidance on setting up and using simulation environments."
+
+  - id: 09
+    title: "Safety, Ethics & Governance (robotics safety fundamentals)"
+    description: "Essential considerations for safe, ethical, and responsible development of humanoid robots."
+    acceptance_tests:
+      - "Outlines fundamental robotics safety standards and guidelines."
+      - "Discusses ethical implications of AI and humanoid robotics."
+      - "Covers basic governance principles for responsible AI development."
+
+  - id: 10
+    title: "Case Studies & Benchmarks (reproducible evaluations)"
+    description: "Real-world applications and benchmarks for evaluating humanoid robot performance."
+    acceptance_tests:
+      - "Presents several reproducible case studies of humanoid robotics projects."
+      - "Details benchmarks and metrics for evaluating key robot capabilities."
+      - "Analyzes the results and lessons learned from case studies."
+
+  - id: 11
+    title: "Future Directions & Research Agenda"
+    description: "Emerging trends, open research questions, and future prospects in AI humanoid robotics."
+    acceptance_tests:
+      - "Identifies key research areas and unanswered questions."
+      - "Discusses potential societal impact and long-term visions."
+      - "Proposes a research agenda for future development."
+
+  - id: references
+    title: "References"
+    description: "Comprehensive list of all cited sources in APA style."
+    acceptance_tests:
+      - "Contains at least 15 credible references."
+      - "At least 50% of references are from peer-reviewed journals."
+      - "All references are formatted in APA style."

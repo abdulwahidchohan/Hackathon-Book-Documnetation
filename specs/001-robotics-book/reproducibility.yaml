@@ -1,0 +1,48 @@
+reproducibility_requirements:
+  per_technical_section:
+    - "OS, toolchain, versions (e.g., Ubuntu 22.04, ROS 2 Humble, Python 3.10)."
+    - "Install commands and configuration steps."
+    - "Minimal Working Example (MWE) code + run steps."
+    - "Expected output (metrics, plots, logs) and troubleshooting tips."
+
+collaboration_protocol:
+  branching_model: "feature/chapter-XX"
+  pr_template_includes:
+    - "word count delta"
+    - "citations added"
+    - "tests run (build, lint)"
+    - "checklist tick"
+  required_reviews: "1 technical + 1 editorial before merge to main"
+
+risk_management:
+  - type: "Scope creep"
+    mitigation: "Stick to chapter scope; defer extras to v1.1."
+  - type: "Citation gaps"
+    mitigation: "Enforce per-claim citations; track gaps in a TODO list."
+  - type: "Build failures"
+    mitigation: "Keep Docusaurus config minimal; validate after each new file."
+  - type: "Reproducibility drift"
+    mitigation: "Pin versions; note known issues in Repro Notes."
+
+milestones_timeline:
+  - name: "Generate specs + Docusaurus skeleton"
+    duration: "Day 1–2"
+    acceptance_tests:
+      - "Specs compile: All spec YAML files pass schema sanity check; chapters.yaml fully maps to docs/*.mdx"
+      - "Build: `npm install && npm run build` completes with no errors; `npm run start` serves docs"
+  - name: "Draft chapters 01–06 with inline citations + MWEs"
+    duration: "Day 3–7"
+    acceptance_tests:
+      - "Content: ≥5,000 words; ≥15 sources (≥50% peer‑reviewed); citations render in pages"
+  - name: "Draft chapters 07–11 + references.md"
+    duration: "Day 8–11"
+    acceptance_tests:
+      - "Content: ≥5,000 words; ≥15 sources (≥50% peer‑reviewed); citations render in pages"
+  - name: "Validation gates (plagiarism, readability, fact-checking matrix, source coverage)"
+    duration: "Day 12–13"
+    acceptance_tests:
+      - "QA: Fact-checking matrix populated; plagiarism plan documented; readability spot checks pass"
+  - name: "Final build + GitHub Pages deployment"
+    duration: "Day 14"
+    acceptance_tests:
+      - "Deploy: GitHub Pages site reachable at configured URL with working sidebar and search"

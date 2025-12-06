@@ -1,0 +1,19 @@
+quality_gates:
+  plagiarism_policy: "0% tolerance; all content must pass plagiarism checks before publishing."
+  fact_checking_matrix: "Completed matrix (claim -> source(s) -> verification notes)."
+  source_coverage_report: "Generated report (count, % peer-reviewed)."
+
+academic_rigor:
+  minimum_sources: 15
+  peer_reviewed_percentage: 50
+  citation_format: "APA style for all references."
+  claims_traceability: "All claims traceable with APA citations."
+
+readability:
+  flesch_kincaid_grade: "10–12 across chapters."
+
+tooling_conventions:
+  lint_markdown: "Prettier/MDX-lint for all Markdown/MDX files."
+  diagrams: "Mermaid in MDX when possible; otherwise PNG/SVG with alt text & captions."
+  code_blocks: "Labeled (```python, ```cpp, ```bash) and verified as runnable."
+  terminology_glossary: "Initialized in Preface (00-preface.mdx)."
