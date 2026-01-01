@@ -1,21 +1,228 @@
 ---
 id: motion-planning-control
-title: Motion Planning & Control
+title: "Motion Planning & Control with NVIDIA Isaac"
 ---
 
 ## Overview
 
-_This chapter will describe algorithms for generating and executing robot movements, including kinematics and dynamics._
+Motion planning and control are critical for humanoid robots to navigate environments, manipulate objects, and maintain balance. **NVIDIA Isaac** provides a comprehensive platform for developing, simulating, and deploying AI-powered robots with advanced perception and control capabilities (NVIDIA, 2023).
 
-## Forward and Inverse Kinematics
+This chapter covers:
+- NVIDIA Isaac Sim for photorealistic simulation
+- Isaac ROS for hardware-accelerated perception
+- Nav2 for path planning and navigation
+- Whole-body control for humanoid locomotion
 
-_Content to be added: Forward and inverse kinematics for multi-joint humanoid arms/legs._
+## NVIDIA Isaac Platform
 
-## Dynamics Models and Control Strategies
+### Isaac Sim
 
-_Content to be added: Dynamics models and control strategies (e.g., whole-body control, impedance control)._
+**Isaac Sim** is NVIDIA's robotics simulation platform built on Omniverse, providing:
+- **Photorealistic rendering** with RTX ray tracing
+- **Accurate physics simulation** using PhysX 5
+- **Synthetic data generation** for training AI models
+- **Sim-to-real transfer** capabilities
 
-## Trajectory Generation and Optimization
+Key features:
+- USD (Universal Scene Description) for scene composition
+- Support for ROS 2 integration
+- Multi-camera sensor simulation
+- Domain randomization for robust training
 
-_Content to be added: Trajectory generation and optimization._
+### Isaac ROS
 
+**Isaac ROS** provides GPU-accelerated packages for:
+- **Visual SLAM** (vSLAM) for localization and mapping
+- **Object detection** and pose estimation
+- **Image processing** pipelines
+- **Depth perception** from stereo cameras
+
+Example: Using Isaac ROS for Visual SLAM
+
+```python
+import rclpy
+from rclpy.node import Node
+from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Image
+
+class VisualSLAMNode(Node):
+    def __init__(self):
+        super().__init__('visual_slam_node')
+        
+        # Subscribe to camera feeds
+        self.left_camera_sub = self.create_subscription(
+            Image,
+            '/left/image_raw',
+            self.left_camera_callback,
+            10
+        )
+        
+        self.right_camera_sub = self.create_subscription(
+            Image,
+            '/right/image_raw',
+            self.right_camera_callback,
+            10
+        )
+        
+        # Publish odometry
+        self.odom_pub = self.create_publisher(Odometry, '/visual_slam/odom', 10)
+        
+        self.get_logger().info('Visual SLAM node started')
+    
+    def left_camera_callback(self, msg):
+        # Process left camera image
+        pass
+    
+    def right_camera_callback(self, msg):
+        # Process right camera image
+        # Run vSLAM algorithm
+        # Publish odometry
+        pass
+```
+
+## Nav2: Navigation Stack
+
+**Nav2** is the ROS 2 navigation stack for autonomous navigation. For humanoid robots, it provides:
+- **Path planning** using A*, Dijkstra, or Theta*
+- **Obstacle avoidance** with dynamic window approach (DWA)
+- **Recovery behaviors** when stuck
+- **Waypoint following** for complex routes
+
+### Setting Up Nav2 for Humanoids
+
+```yaml
+# nav2_params.yaml
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+
+controller_server:
+  ros__parameters:
+    controller_frequency: 20.0
+    controller_plugins: ["FollowPath"]
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      max_vel_x: 0.5
+      max_vel_theta: 1.0
+```
+
+## Whole-Body Control
+
+Humanoid robots require coordinated control of 20-40+ joints. **Whole-body control** frameworks optimize joint trajectories while satisfying constraints:
+
+- **Balance constraints**: Center of Mass (CoM) within support polygon
+- **Joint limits**: Position, velocity, acceleration bounds
+- **Contact forces**: Maintain foot contact with ground
+- **Task priorities**: Hierarchical task execution
+
+### Model Predictive Control (MPC)
+
+MPC optimizes future trajectories by solving:
+
+```
+minimize: J = Σ(x - x_ref)^T Q (x - x_ref) + u^T R u
+subject to:
+  x_{k+1} = f(x_k, u_k)
+  g(x_k, u_k) ≤ 0
+```
+
+Where:
+- `x`: State (joint positions, velocities)
+- `u`: Control inputs (joint torques)
+- `Q, R`: Weight matrices
+- `g`: Constraints (balance, limits)
+
+## Practical Example: Humanoid Navigation
+
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped
+from nav2_msgs.action import NavigateToPose
+from rclpy.action import ActionClient
+
+class HumanoidNavigator(Node):
+    def __init__(self):
+        super().__init__('humanoid_navigator')
+        
+        self._action_client = ActionClient(
+            self,
+            NavigateToPose,
+            'navigate_to_pose'
+        )
+        
+    def navigate_to_goal(self, x, y, theta):
+        goal_msg = NavigateToPose.Goal()
+        goal_msg.pose.header.frame_id = 'map'
+        goal_msg.pose.pose.position.x = x
+        goal_msg.pose.pose.position.y = y
+        goal_msg.pose.pose.orientation.z = theta
+        
+        self._action_client.wait_for_server()
+        
+        self._send_goal_future = self._action_client.send_goal_async(
+            goal_msg,
+            feedback_callback=self.feedback_callback
+        )
+        
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+    
+    def feedback_callback(self, feedback_msg):
+        feedback = feedback_msg.feedback
+        self.get_logger().info(f'Distance remaining: {feedback.distance_remaining:.2f}m')
+    
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected')
+            return
+        
+        self.get_logger().info('Goal accepted, navigating...')
+        
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+    
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info('Navigation complete!')
+
+def main(args=None):
+    rclpy.init(args=args)
+    navigator = HumanoidNavigator()
+    
+    # Navigate to position (2.0, 1.0) with 0 rotation
+    navigator.navigate_to_goal(2.0, 1.0, 0.0)
+    
+    rclpy.spin(navigator)
+    navigator.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Summary
+
+NVIDIA Isaac provides a complete platform for humanoid robot development:
+- **Isaac Sim**: Photorealistic simulation and synthetic data
+- **Isaac ROS**: GPU-accelerated perception and SLAM
+- **Nav2**: Autonomous navigation and path planning
+- **Whole-body control**: Coordinated multi-joint motion
+
+These tools enable rapid development and sim-to-real transfer for humanoid robotics applications.
+
+## References
+
+- NVIDIA. (2023). NVIDIA Isaac Sim documentation. Retrieved from https://docs.omniverse.nvidia.com/isaacsim/
+- Macenski, S., et al. (2020). The marathon 2: A navigation system. *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*.

@@ -1,21 +1,146 @@
 ---
 id: hardware-sensors
-title: Humanoid Hardware & Sensors
+title: "Hardware & Sensors for Humanoid Robots"
 ---
 
 ## Overview
 
-_This chapter will detail humanoid robot hardware components and sensing modalities._
+Humanoid robots require sophisticated hardware and sensor systems to perceive and interact with their environment. This chapter covers the essential components that enable physical embodiment and environmental awareness.
 
-## Motors and Actuators
+## Actuators and Motors
 
-_Content to be added: Types of motors and actuators in humanoid robots (e.g., series elastic actuators)._
+### Types of Actuators
 
-## Inertial Measurement Units (IMUs)
+**1. Electric Motors**
+- **Brushless DC Motors**: High efficiency, precise control
+- **Servo Motors**: Position feedback, common in joints
+- **Stepper Motors**: Precise positioning without feedback
 
-_Content to be added: Role of Inertial Measurement Units (IMUs) for state estimation._
+**2. Hydraulic Actuators**
+- High force-to-weight ratio
+- Used in Boston Dynamics Atlas
+- Complex maintenance requirements
 
-## Force/Torque Sensors
+**3. Pneumatic Actuators**
+- Compliant, safe for human interaction
+- Lower precision than electric motors
 
-_Content to be added: Force/torque sensors for compliant manipulation._
+### Joint Design
 
+Humanoid robots typically have 20-44 degrees of freedom (DOF):
+- **Head**: 2-3 DOF (pitch, yaw, roll)
+- **Arms**: 7 DOF each (shoulder 3, elbow 1, wrist 3)
+- **Hands**: 12-15 DOF (multi-fingered grasping)
+- **Torso**: 2-3 DOF (waist rotation, bending)
+- **Legs**: 6 DOF each (hip 3, knee 1, ankle 2)
+
+## Vision Sensors
+
+### RGB Cameras
+- Standard color imaging
+- Object recognition and tracking
+- Typical resolution: 1080p-4K
+
+### Depth Cameras
+- **Stereo Cameras**: Triangulation-based depth
+- **Time-of-Flight (ToF)**: Infrared light measurement
+- **Structured Light**: Pattern projection (e.g., Intel RealSense)
+
+### LiDAR
+- 2D/3D environment mapping
+- Range: 0.1m - 100m+
+- Used for SLAM and obstacle avoidance
+
+## Proprioceptive Sensors
+
+### Inertial Measurement Units (IMUs)
+- **Accelerometers**: Linear acceleration
+- **Gyroscopes**: Angular velocity
+- **Magnetometers**: Orientation reference
+- Typical update rate: 100-1000 Hz
+
+### Encoders
+- **Absolute Encoders**: Position without homing
+- **Incremental Encoders**: Relative position
+- Resolution: 1000-10000 counts per revolution
+
+### Force/Torque Sensors
+- Measure contact forces
+- Enable compliant control
+- Critical for manipulation and walking
+
+## Tactile Sensors
+
+### Types
+- **Resistive**: Pressure-sensitive materials
+- **Capacitive**: Proximity and touch detection
+- **Optical**: Camera-based tactile sensing (e.g., GelSight)
+
+### Applications
+- Grasp stability
+- Object property detection
+- Safe human-robot interaction
+
+## Power Systems
+
+### Battery Technologies
+- **Lithium-Ion**: High energy density
+- **Lithium-Polymer**: Flexible form factor
+- Typical capacity: 2-5 kWh for humanoids
+- Operating time: 2-4 hours
+
+### Power Distribution
+- Voltage regulation for different components
+- Emergency shutdown systems
+- Thermal management
+
+## Computing Hardware
+
+### Onboard Computers
+- **CPU**: Intel i7/i9, AMD Ryzen
+- **GPU**: NVIDIA Jetson (edge AI)
+- **FPGA**: Real-time control loops
+
+### Edge AI Accelerators
+- NVIDIA Jetson AGX Orin
+- Google Coral TPU
+- Intel Neural Compute Stick
+
+## Communication Systems
+
+### Wireless
+- **WiFi**: High bandwidth, limited range
+- **5G**: Low latency, wide coverage
+- **Bluetooth**: Low power, short range
+
+### Wired
+- **Ethernet**: Reliable, high bandwidth
+- **CAN Bus**: Motor controller communication
+- **USB**: Peripheral connections
+
+## Safety Systems
+
+### Emergency Stop
+- Hardware e-stop buttons
+- Software-triggered stops
+- Redundant safety circuits
+
+### Collision Detection
+- Torque monitoring
+- Skin sensors
+- Vision-based prediction
+
+## Summary
+
+Humanoid robot hardware integrates:
+- **Actuators**: 20-44 DOF for human-like motion
+- **Vision**: RGB, depth, LiDAR for perception
+- **Proprioception**: IMUs, encoders, force sensors
+- **Tactile**: Touch sensing for manipulation
+- **Power**: 2-4 hour battery operation
+- **Computing**: Edge AI for real-time processing
+
+## References
+
+- Hirose, M., & Ogawa, K. (2007). Honda humanoid robots development. *Philosophical Transactions of the Royal Society A, 365*(1850), 11-19.
+- Dahiya, R. S., et al. (2010). Tactile sensing—from humans to humanoids. *IEEE Transactions on Robotics, 26*(1), 1-20.

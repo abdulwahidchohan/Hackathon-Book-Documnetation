@@ -1,0 +1,250 @@
+---
+id: case-studies
+title: "Case Studies & Benchmarks"
+---
+
+## Overview
+
+This chapter examines real-world humanoid robot deployments, research benchmarks, and lessons learned from successful and failed projects.
+
+## Case Study 1: Boston Dynamics Atlas
+
+### Overview
+- **Developer**: Boston Dynamics
+- **First Release**: 2013
+- **Current Version**: Atlas (2023)
+- **Height**: 1.5m, Weight: 89kg
+
+### Key Capabilities
+- Dynamic bipedal locomotion
+- Parkour (running, jumping, backflips)
+- Object manipulation
+- Autonomous navigation
+
+### Technical Innovations
+- Hydraulic actuation for high power-to-weight ratio
+- Model predictive control for balance
+- Whole-body trajectory optimization
+- Real-time perception and planning
+
+### Lessons Learned
+- Hydraulics provide power but require complex maintenance
+- Robust control crucial for dynamic maneuvers
+- Simulation-to-reality transfer needs careful tuning
+
+## Case Study 2: Tesla Optimus
+
+### Overview
+- **Developer**: Tesla
+- **Announcement**: 2021
+- **Target**: General-purpose humanoid
+- **Cost Goal**: &lt;$20,000
+
+### Design Philosophy
+- Leverage Tesla's AI infrastructure (FSD, Dojo)
+- Vision-based control (no LiDAR)
+- Mass production approach
+- End-to-end learning
+
+### Current Status (2024)
+- Walking and basic manipulation demonstrated
+- Factory deployment for simple tasks
+- Ongoing development of dexterity
+
+### Implications
+- Potential for affordable humanoids
+- Vision-only approach controversial
+- Manufacturing scale could transform industry
+
+## Case Study 3: Figure 01
+
+### Overview
+- **Developer**: Figure AI
+- **Founded**: 2022
+- **Focus**: Commercial deployment
+- **Partnerships**: OpenAI (LLM integration)
+
+### Innovation: LLM-Powered Interaction
+
+```python
+# Conceptual architecture
+def process_command(voice_input):
+    # Speech to text
+    text = whisper.transcribe(voice_input)
+    
+    # LLM task planning
+    plan = gpt4.plan_task(text)
+    
+    # Execute actions
+    for action in plan:
+        robot.execute(action)
+```
+
+### Deployment Strategy
+- Target: Warehouses and manufacturing
+- Human-robot collaboration
+- Iterative deployment and learning
+
+## Case Study 4: Unitree H1
+
+### Overview
+- **Developer**: Unitree Robotics (China)
+- **Release**: 2023
+- **Price**: ~$90,000
+- **Focus**: Research and education
+
+### Specifications
+- Height: 1.8m
+- Weight: 47kg
+- 360°/s joint speeds
+- 3D LiDAR + depth cameras
+
+### Impact on Research
+- Affordable platform for universities
+- Open SDK and documentation
+- Active research community
+
+## Research Benchmarks
+
+### RoboCup Humanoid League
+
+**Objective**: Robot soccer competition
+
+**Categories**:
+- Kid Size (40-90cm)
+- Teen Size (80-140cm)
+- Adult Size (130-180cm)
+
+**Skills Tested**:
+- Bipedal walking
+- Ball detection and tracking
+- Kicking
+- Team coordination
+
+**Recent Winners**:
+- 2023: Team NimbRo (Germany)
+- Key innovation: Deep learning for vision
+
+### DARPA Robotics Challenge (2015)
+
+**Tasks**:
+1. Drive vehicle
+2. Egress vehicle
+3. Open door
+4. Turn valve
+5. Use power tool
+6. Clear debris
+7. Climb stairs
+8. Final surprise task
+
+**Winner**: Team KAIST (Korea) - DRC-HUBO
+
+**Lessons**:
+- Reliability > speed
+- Teleoperation crucial for complex tasks
+- Battery life critical constraint
+
+### Humanoid Robot Benchmarks
+
+**Locomotion**:
+- Walking speed: 1.5-2.5 m/s
+- Stair climbing: 15-20 cm step height
+- Rough terrain: Uneven surfaces, slopes
+
+**Manipulation**:
+- Grasp success rate: &gt;90%
+- Object weight: 5-10 kg
+- Task completion time
+
+**Autonomy**:
+- Navigation accuracy: &lt;10 cm error
+- Obstacle avoidance: 100% success
+- Battery life: 2-4 hours
+
+## Failed Projects and Lessons
+
+### ASIMO (Retired 2018)
+
+**Achievements**:
+- Pioneer in bipedal walking
+- Smooth, human-like gait
+- Stair climbing, running
+
+**Why Retired**:
+- Limited practical applications
+- High cost, low ROI
+- Shift to AI-driven approaches
+
+**Lessons**:
+- Technical excellence ≠ commercial success
+- Need clear use cases
+- Market timing matters
+
+### Pepper (Discontinued 2021)
+
+**Concept**: Social companion robot
+
+**Issues**:
+- Limited functionality
+- High expectations vs. reality
+- Maintenance costs
+- Privacy concerns
+
+**Lessons**:
+- Social robotics is hard
+- Novelty wears off
+- Need genuine value proposition
+
+## Performance Metrics
+
+### Quantitative Benchmarks
+
+| Metric | Atlas | Optimus | H1 | Human |
+|--------|-------|---------|----|----|
+| Walking Speed | 2.5 m/s | 1.5 m/s | 2.0 m/s | 1.4 m/s |
+| Payload | 11 kg | 20 kg | 15 kg | 25 kg |
+| Battery Life | 1 hr | 2 hr | 3 hr | N/A |
+| Cost | $150k+ | &lt;$20k (goal) | $90k | N/A |
+
+### Qualitative Assessment
+
+**Robustness**:
+- Atlas: Excellent (parkour, recovery)
+- Optimus: Good (factory environment)
+- H1: Good (research settings)
+
+**Versatility**:
+- Atlas: High (research platform)
+- Optimus: Medium (specific tasks)
+- H1: High (open platform)
+
+## Industry Trends
+
+### 2020-2024
+- AI-native design (end-to-end learning)
+- Vision-language-action models
+- Sim-to-real transfer
+- Commercial deployments beginning
+
+### 2025-2030 (Projected)
+- Mass production ($10k-$50k range)
+- Widespread warehouse deployment
+- Home assistance pilots
+- Regulatory frameworks emerging
+
+## Summary
+
+Case studies reveal:
+- **Technical Excellence**: Atlas leads in dynamic capabilities
+- **Commercial Viability**: Tesla/Figure focus on practical deployment
+- **Accessibility**: Unitree democratizes research
+- **Benchmarks**: RoboCup, DARPA challenge drive innovation
+- **Failures**: ASIMO, Pepper teach importance of use cases
+
+The field is transitioning from research demonstrations to commercial products.
+
+## References
+
+- Raibert, M., et al. (2008). BigDog, the rough-terrain quadruped robot. *IFAC Proceedings Volumes, 41*(2), 10822-10825.
+- Atkeson, C. G., et al. (2015). What happened at the DARPA Robotics Challenge Finals. *The DARPA Robotics Challenge Finals: Humanoid Robots To The Rescue*, 667-684.
+- Boston Dynamics. (2023). Atlas: The world's most dynamic humanoid robot. Retrieved from https://www.bostondynamics.com/atlas

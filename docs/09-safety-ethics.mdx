@@ -1,21 +1,273 @@
 ---
 id: safety-ethics
-title: Safety, Ethics & Governance
+title: "Safety & Ethics in Humanoid Robotics"
 ---
 
 ## Overview
 
-_This chapter will detail essential considerations for safe, ethical, and responsible development of humanoid robots._
+As humanoid robots become more capable and prevalent, safety and ethical considerations are paramount. This chapter addresses technical safety measures, ethical frameworks, and responsible deployment.
 
-## Robotics Safety Standards
+## Safety Standards
 
-_Content to be added: Robotics safety standards (e.g., ISO 13482, ISO/TS 15066)._
+### ISO 13482
+- Safety requirements for personal care robots
+- Risk assessment and reduction
+- Protective measures
 
-## Ethical Considerations
+### ISO/TS 15066
+- Collaborative robots (cobots)
+- Power and force limiting
+- Safety-rated monitored stop
 
-_Content to be added: Ethical considerations in AI humanoid robotics (e.g., bias, autonomy)._
+## Technical Safety Measures
 
-## Governance Frameworks
+### Collision Detection and Avoidance
 
-_Content to be added: Governance frameworks for responsible AI development._
+```python
+class CollisionMonitor(Node):
+    def __init__(self):
+        super().__init__('collision_monitor')
+        
+        # Subscribe to joint torques
+        self.torque_sub = self.create_subscription(
+            JointState, '/joint_states', self.torque_callback, 10
+        )
+        
+        # Emergency stop publisher
+        self.estop_pub = self.create_publisher(Bool, '/emergency_stop', 10)
+        
+        self.torque_threshold = 50.0  # Nm
+    
+    def torque_callback(self, msg):
+        # Check for unexpected torques (collision)
+        for effort in msg.effort:
+            if abs(effort) > self.torque_threshold:
+                self.get_logger().warn('Collision detected!')
+                self.trigger_estop()
+    
+    def trigger_estop(self):
+        msg = Bool()
+        msg.data = True
+        self.estop_pub.publish(msg)
+```
 
+### Safe Motion Planning
+
+**Velocity and Acceleration Limits**
+```python
+def check_trajectory_safety(trajectory):
+    """Verify trajectory meets safety constraints"""
+    max_velocity = 1.0  # m/s
+    max_acceleration = 2.0  # m/s^2
+    
+    for i in range(len(trajectory) - 1):
+        dt = trajectory[i+1].time - trajectory[i].time
+        
+        # Check velocity
+        velocity = (trajectory[i+1].position - trajectory[i].position) / dt
+        if abs(velocity) > max_velocity:
+            return False
+        
+        # Check acceleration
+        if i > 0:
+            prev_velocity = (trajectory[i].position - trajectory[i-1].position) / dt
+            acceleration = (velocity - prev_velocity) / dt
+            if abs(acceleration) > max_acceleration:
+                return False
+    
+    return True
+```
+
+### Redundant Safety Systems
+
+- Hardware emergency stop
+- Software watchdog timers
+- Redundant sensor validation
+- Fail-safe defaults
+
+## Human-Robot Interaction Safety
+
+### Personal Space
+- Maintain minimum distance (0.5-1.0m)
+- Slow down when humans approach
+- Stop if distance < safety threshold
+
+### Intent Recognition
+
+```python
+def predict_human_intent(human_pose, human_velocity):
+    """Predict if human is approaching robot"""
+    # Calculate trajectory
+    predicted_position = human_pose + human_velocity * 2.0  # 2 seconds
+    
+    # Check if approaching robot
+    distance_to_robot = np.linalg.norm(predicted_position - robot_position)
+    
+    if distance_to_robot < 1.0:
+        return "APPROACHING"
+    else:
+        return "SAFE"
+```
+
+### Compliant Control
+
+- Impedance control for safe contact
+- Variable stiffness based on context
+- Force limiting
+
+## Ethical Frameworks
+
+### Asimov's Laws (Updated)
+
+1. **Do No Harm**: Robots must not harm humans or allow harm through inaction
+2. **Obey Orders**: Follow human commands unless they conflict with the first law
+3. **Self-Preservation**: Protect own existence unless it conflicts with laws 1 or 2
+
+### IEEE Ethically Aligned Design
+
+- Human rights
+- Well-being
+- Data agency
+- Effectiveness
+- Transparency
+- Accountability
+
+## Privacy and Data Protection
+
+### Data Minimization
+
+```python
+class PrivacyPreservingVision(Node):
+    def __init__(self):
+        super().__init__('privacy_vision')
+        
+        self.image_sub = self.create_subscription(
+            Image, '/camera/image', self.image_callback, 10
+        )
+    
+    def image_callback(self, msg):
+        # Blur faces for privacy
+        image = self.bridge.imgmsg_to_cv2(msg)
+        faces = self.detect_faces(image)
+        
+        for (x, y, w, h) in faces:
+            # Blur face region
+            face_region = image[y:y+h, x:x+w]
+            blurred = cv2.GaussianBlur(face_region, (99, 99), 30)
+            image[y:y+h, x:x+w] = blurred
+        
+        # Process anonymized image
+        self.process_image(image)
+```
+
+### Data Retention Policies
+
+- Store only necessary data
+- Automatic deletion after retention period
+- Encrypted storage
+- User consent for data collection
+
+## Bias and Fairness
+
+### Algorithmic Bias
+
+**Detection**
+- Test on diverse datasets
+- Measure performance across demographics
+- Monitor for disparate impact
+
+**Mitigation**
+- Diverse training data
+- Fairness constraints in optimization
+- Regular audits
+
+## Transparency and Explainability
+
+### Explainable AI (XAI)
+
+```python
+def explain_decision(observation, action, model):
+    """Explain why robot took specific action"""
+    # SHAP values for feature importance
+    explainer = shap.Explainer(model)
+    shap_values = explainer(observation)
+    
+    # Get top contributing features
+    top_features = np.argsort(np.abs(shap_values))[-5:]
+    
+    explanation = f"Action '{action}' was chosen because:\n"
+    for feature_idx in top_features:
+        explanation += f"- {feature_names[feature_idx]}: {shap_values[feature_idx]:.3f}\n"
+    
+    return explanation
+```
+
+### Decision Logging
+
+- Log all autonomous decisions
+- Record sensor inputs and reasoning
+- Enable post-hoc analysis
+
+## Liability and Accountability
+
+### Responsibility Assignment
+
+- Manufacturer: Design defects
+- Operator: Misuse or negligence
+- Developer: Software bugs
+- User: Improper use
+
+### Insurance Models
+
+- Product liability insurance
+- Cyber liability coverage
+- Professional indemnity
+
+## Deployment Guidelines
+
+### Risk Assessment
+
+1. Identify hazards
+2. Estimate probability and severity
+3. Implement risk reduction measures
+4. Verify effectiveness
+5. Document and review
+
+### Testing and Certification
+
+- Functional safety testing
+- Stress testing
+- User acceptance testing
+- Third-party certification
+
+## Social Impact
+
+### Job Displacement
+
+- Automation of repetitive tasks
+- Need for retraining programs
+- Creation of new jobs (robot maintenance, programming)
+
+### Accessibility
+
+- Assistive robots for elderly and disabled
+- Reducing cost barriers
+- Inclusive design
+
+## Summary
+
+Safety and ethics in humanoid robotics require:
+- **Technical Safety**: Collision detection, safe planning, redundancy
+- **HRI Safety**: Personal space, intent recognition, compliant control
+- **Ethics**: Do no harm, transparency, accountability
+- **Privacy**: Data minimization, anonymization
+- **Fairness**: Bias detection and mitigation
+- **Deployment**: Risk assessment, testing, certification
+
+Responsible development ensures humanoid robots benefit society while minimizing risks.
+
+## References
+
+- Asimov, I. (1950). *I, Robot*. Gnome Press.
+- IEEE. (2019). Ethically aligned design: A vision for prioritizing human well-being with autonomous and intelligent systems. Retrieved from https://standards.ieee.org/
+- Robinette, P., et al. (2017). Overtrust of robots in emergency evacuation scenarios. *ACM/IEEE International Conference on Human-Robot Interaction*.

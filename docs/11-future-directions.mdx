@@ -1,21 +1,295 @@
 ---
 id: future-directions
-title: Future Directions & Research Agenda
+title: "Future Directions & Research Agenda"
 ---
 
 ## Overview
 
-_This chapter will discuss emerging trends, open research questions, and future prospects in AI humanoid robotics._
+The field of humanoid robotics is rapidly evolving. This chapter explores emerging trends, open research questions, and the future trajectory of Physical AI.
 
-## Emerging Hardware Technologies
+## Emerging Technologies
 
-_Content to be added: Emerging hardware technologies for humanoids._
+### Foundation Models for Robotics
 
-## Advanced AI Techniques
+**RT-X: Robotic Transformer X**
+- Cross-embodiment learning
+- Transfer knowledge across robot platforms
+- Trained on diverse manipulation datasets
 
-_Content to be added: Advanced AI techniques: lifelong learning, foundation models in robotics._
+**PaLM-E: Embodied Language Model**
+- 562B parameters
+- Multimodal (vision + language + robotics)
+- Zero-shot task generalization
 
-## Societal Impact
+### Neuromorphic Computing
 
-_Content to be added: Societal impact and future of human-robot coexistence._
+**Advantages**:
+- Ultra-low power consumption
+- Event-driven processing
+- Parallel computation
 
+**Applications**:
+- Real-time sensory processing
+- Adaptive control
+- Energy-efficient AI
+
+### Soft Robotics Integration
+
+**Compliant Actuators**:
+- Pneumatic artificial muscles
+- Dielectric elastomers
+- Shape memory alloys
+
+**Benefits**:
+- Safer human interaction
+- Adaptable grasping
+- Robust to impacts
+
+## Open Research Questions
+
+### 1. Generalization
+
+**Challenge**: Robots struggle with novel situations
+
+**Current Approaches**:
+- Meta-learning (learning to learn)
+- Few-shot imitation learning
+- Sim-to-real with domain randomization
+
+**Open Questions**:
+- How to achieve human-level generalization?
+- Can we learn world models from limited data?
+- What representations enable transfer?
+
+### 2. Long-Horizon Tasks
+
+**Challenge**: Planning and executing multi-step tasks
+
+**Example**: "Prepare dinner"
+- Requires: Navigation, manipulation, tool use
+- Duration: 30-60 minutes
+- Failure recovery needed
+
+**Research Directions**:
+- Hierarchical reinforcement learning
+- LLM-based task decomposition
+- Continual learning
+
+### 3. Energy Efficiency
+
+**Current State**:
+- Humanoids: 2-4 hours battery life
+- Humans: 24+ hours on 2000 calories
+
+**Gap**: 10-100x energy efficiency difference
+
+**Approaches**:
+- Passive dynamics (exploit gravity)
+- Energy-optimal gaits
+- Regenerative braking
+- Better batteries (solid-state)
+
+### 4. Dexterity
+
+**Challenge**: Human-level manipulation
+
+**Human Hand**:
+- 27 degrees of freedom
+- Tactile sensing (17,000 receptors)
+- Fine motor control
+
+**Robot Limitations**:
+- Fewer DOF (typically 12-15)
+- Limited tactile feedback
+- Slower, less precise
+
+**Research**:
+- Tendon-driven hands
+- High-density tactile sensors
+- Learning from human demonstrations
+
+## Future Applications
+
+### Healthcare
+
+**Elderly Care**:
+- Mobility assistance
+- Medication reminders
+- Social companionship
+- Fall detection and response
+
+**Hospital Support**:
+- Patient transport
+- Supply delivery
+- Disinfection
+- Telepresence for doctors
+
+### Manufacturing
+
+**Flexible Automation**:
+- Adapt to product changes
+- Work alongside humans
+- Handle delicate components
+- Quality inspection
+
+**Small-Batch Production**:
+- Cost-effective for low volumes
+- Quick reconfiguration
+- Reduced setup time
+
+### Domestic Service
+
+**Household Tasks**:
+- Cleaning and tidying
+- Laundry folding
+- Meal preparation
+- Grocery shopping
+
+**Challenges**:
+- Unstructured environments
+- Safety around children/pets
+- Privacy concerns
+- Cost ($10k-$20k target)
+
+### Disaster Response
+
+**Search and Rescue**:
+- Navigate rubble
+- Locate survivors
+- Deliver supplies
+- Assess structural damage
+
+**Hazardous Environments**:
+- Nuclear facilities
+- Chemical spills
+- Fire suppression
+- Underwater operations
+
+## Technological Roadmap
+
+### 2025-2027: Early Deployment
+
+- Warehouse automation (picking, packing)
+- Factory floor assistance
+- Research platforms widely available
+- Cost: $50k-$100k
+
+### 2028-2030: Expansion
+
+- Retail and hospitality pilots
+- Healthcare assistance trials
+- Improved dexterity and autonomy
+- Cost: $20k-$50k
+
+### 2031-2035: Mass Adoption
+
+- Home assistance robots
+- Widespread commercial use
+- Human-level manipulation
+- Cost: $10k-$20k
+
+### 2036+: Integration
+
+- Ubiquitous in daily life
+- Seamless human-robot collaboration
+- Ethical and legal frameworks mature
+- Cost: &lt;$10k
+
+## Societal Implications
+
+### Economic Impact
+
+**Job Creation**:
+- Robot maintenance technicians
+- AI trainers and supervisors
+- Robotics software developers
+
+**Job Displacement**:
+- Repetitive manual labor
+- Warehouse workers
+- Food service
+
+**Net Effect**: Uncertain, depends on policy
+
+### Education and Training
+
+**New Curricula**:
+- Robotics engineering
+- Human-robot interaction
+- AI ethics
+
+**Lifelong Learning**:
+- Reskilling programs
+- Vocational training
+- Online courses
+
+### Regulatory Landscape
+
+**Needed Frameworks**:
+- Safety standards (ISO updates)
+- Liability laws
+- Privacy regulations
+- Ethical guidelines
+
+**International Coordination**:
+- Harmonized standards
+- Cross-border deployment
+- Technology transfer
+
+## Research Priorities
+
+### Technical
+
+1. **Robustness**: Operate in unstructured environments
+2. **Efficiency**: 10x improvement in energy use
+3. **Dexterity**: Human-level manipulation
+4. **Autonomy**: Long-horizon task execution
+5. **Learning**: Few-shot generalization
+
+### Societal
+
+1. **Safety**: Guaranteed safe operation
+2. **Ethics**: Transparent, accountable AI
+3. **Accessibility**: Affordable for all
+4. **Privacy**: Data protection by design
+5. **Fairness**: Unbiased algorithms
+
+## Call to Action
+
+### For Researchers
+
+- Pursue open problems in generalization, efficiency, dexterity
+- Share datasets and code openly
+- Collaborate across disciplines
+- Consider societal impact
+
+### For Industry
+
+- Invest in long-term R&D
+- Prioritize safety and ethics
+- Engage with regulators
+- Create accessible products
+
+### For Policymakers
+
+- Fund basic research
+- Develop regulatory frameworks
+- Support workforce transition
+- Promote responsible innovation
+
+## Conclusion
+
+Humanoid robotics stands at an inflection point. Technical advances in AI, sensors, and actuators are converging with commercial viability. The next decade will determine whether humanoid robots become transformative technology or remain niche tools.
+
+Success requires:
+- **Technical Innovation**: Solving open research problems
+- **Responsible Development**: Prioritizing safety and ethics
+- **Societal Preparation**: Education, policy, and workforce adaptation
+
+The future of Physical AI is being written now. Your contributions—as researchers, developers, or informed citizens—will shape that future.
+
+## References
+
+- Brohan, A., et al. (2023). RT-2: Vision-language-action models transfer web knowledge to robotic control. *arXiv preprint arXiv:2307.15818*.
+- Driess, D., et al. (2023). PaLM-E: An embodied multimodal language model. *arXiv preprint arXiv:2303.03378*.
+- Rus, D., & Tolley, M. T. (2015). Design, fabrication and control of soft robots. *Nature, 521*(7553), 467-475.

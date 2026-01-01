@@ -1,21 +1,341 @@
 ---
 id: language-multimodal-cognition
-title: Language, Multimodal & Cognitive Models
+title: "Vision-Language-Action Models for Humanoid Robotics"
 ---
 
 ## Overview
 
-_This chapter will explain the integration of advanced AI models like LLMs and VLMs for higher-level cognitive functions._
+**Vision-Language-Action (VLA)** models represent the convergence of computer vision, natural language processing, and robotic control. These models enable humanoid robots to understand natural language commands, perceive their environment, and execute complex tasks (Brohan et al., 2023).
 
-## Large Language Models (LLMs) for Planning
+This chapter covers:
+- Voice-to-Action pipelines using OpenAI Whisper
+- LLM integration for task planning
+- Multimodal perception and reasoning
+- End-to-end VLA architectures
 
-_Content to be added: Integration of Large Language Models (LLMs) for high-level planning._
+## Voice-to-Action Pipeline
 
-## Multimodal Learning
+### OpenAI Whisper for Speech Recognition
 
-_Content to be added: Multimodal learning (e.g., Vision-Language Models for task understanding)._
+**Whisper** is a robust speech recognition model that converts voice commands to text with high accuracy across multiple languages.
 
-## Cognitive Architectures
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+import whisper
+import sounddevice as sd
+import numpy as np
 
-_Content to be added: Cognitive architectures for humanoid robots._
+class VoiceCommandNode(Node):
+    def __init__(self):
+        super().__init__('voice_command_node')
+        
+        # Load Whisper model
+        self.model = whisper.load_model("base")
+        
+        # Publisher for transcribed commands
+        self.command_pub = self.create_publisher(String, '/voice_command', 10)
+        
+        # Audio parameters
+        self.sample_rate = 16000
+        self.duration = 5  # seconds
+        
+        self.get_logger().info('Voice command node ready. Say a command...')
+        
+        # Start listening
+        self.timer = self.create_timer(0.1, self.listen_for_command)
+    
+    def listen_for_command(self):
+        # Record audio
+        audio = sd.rec(
+            int(self.duration * self.sample_rate),
+            samplerate=self.sample_rate,
+            channels=1,
+            dtype='float32'
+        )
+        sd.wait()
+        
+        # Transcribe with Whisper
+        audio_np = audio.flatten()
+        result = self.model.transcribe(audio_np)
+        
+        command = result["text"]
+        self.get_logger().info(f'Heard: {command}')
+        
+        # Publish command
+        msg = String()
+        msg.data = command
+        self.command_pub.publish(msg)
+```
 
+## LLM-Based Task Planning
+
+Large Language Models can decompose natural language commands into executable robot actions.
+
+### GPT-4 for Task Decomposition
+
+```python
+from openai import OpenAI
+from rclpy.node import Node
+from std_msgs.msg import String
+import json
+
+class TaskPlannerNode(Node):
+    def __init__(self):
+        super().__init__('task_planner')
+        
+        self.client = OpenAI()
+        
+        # Subscribe to voice commands
+        self.subscription = self.create_subscription(
+            String,
+            '/voice_command',
+            self.command_callback,
+            10
+        )
+        
+        # Publish action sequence
+        self.action_pub = self.create_publisher(String, '/action_sequence', 10)
+    
+    def command_callback(self, msg):
+        command = msg.data
+        self.get_logger().info(f'Planning for: {command}')
+        
+        # Generate action plan
+        plan = self.generate_plan(command)
+        
+        # Publish plan
+        plan_msg = String()
+        plan_msg.data = json.dumps(plan)
+        self.action_pub.publish(plan_msg)
+    
+    def generate_plan(self, command):
+        system_prompt = """You are a robot task planner. Given a natural language command,
+        decompose it into a sequence of primitive actions.
+        
+        Available actions:
+        - navigate(x, y): Move to position (x, y)
+        - grasp(object): Grasp the specified object
+        - release(): Release the grasped object
+        - search(object): Search for an object
+        - pick_and_place(object, location): Pick object and place at location
+        
+        Return a JSON array of actions with parameters."""
+        
+        response = self.client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Command: {command}"}
+            ],
+            temperature=0.3
+        )
+        
+        plan_text = response.choices[0].message.content
+        
+        try:
+            plan = json.loads(plan_text)
+            return plan
+        except:
+            self.get_logger().error('Failed to parse plan')
+            return []
+```
+
+## Multimodal Perception
+
+VLA models combine vision and language for robust understanding.
+
+### Vision-Language Model Integration
+
+```python
+from transformers import CLIPProcessor, CLIPModel
+from PIL import Image
+import torch
+
+class VisionLanguageNode(Node):
+    def __init__(self):
+        super().__init__('vision_language_node')
+        
+        # Load CLIP model
+        self.model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+        
+        # Subscribe to camera
+        self.image_sub = self.create_subscription(
+            Image,
+            '/camera/image_raw',
+            self.image_callback,
+            10
+        )
+        
+        # Current query
+        self.current_query = "a red cup on the table"
+    
+    def image_callback(self, msg):
+        # Convert ROS image to PIL
+        image = self.ros_to_pil(msg)
+        
+        # Process with CLIP
+        inputs = self.processor(
+            text=[self.current_query],
+            images=image,
+            return_tensors="pt",
+            padding=True
+        )
+        
+        outputs = self.model(**inputs)
+        logits_per_image = outputs.logits_per_image
+        probs = logits_per_image.softmax(dim=1)
+        
+        confidence = probs[0][0].item()
+        
+        if confidence > 0.7:
+            self.get_logger().info(f'Found: {self.current_query} (confidence: {confidence:.2f})')
+    
+    def ros_to_pil(self, ros_image):
+        # Convert ROS Image message to PIL Image
+        # Implementation depends on image encoding
+        pass
+```
+
+## End-to-End VLA Architecture
+
+Modern VLA models learn direct mappings from observations to actions.
+
+### RT-2: Robotic Transformer
+
+RT-2 (Brohan et al., 2023) combines vision transformers with language models:
+
+```
+Input: [Image, Text Command]
+  ↓
+Vision Transformer (ViT)
+  ↓
+Language Model (T5/PaLM)
+  ↓
+Action Tokens
+  ↓
+Output: [Joint Positions, Gripper State]
+```
+
+### Practical VLA Example
+
+```python
+class VLAControlNode(Node):
+    def __init__(self):
+        super().__init__('vla_control')
+        
+        # Subscribers
+        self.image_sub = self.create_subscription(
+            Image, '/camera/image', self.image_callback, 10
+        )
+        self.command_sub = self.create_subscription(
+            String, '/voice_command', self.command_callback, 10
+        )
+        
+        # Publisher for robot actions
+        self.action_pub = self.create_publisher(
+            JointTrajectory, '/joint_trajectory', 10
+        )
+        
+        # VLA model (placeholder - use actual model)
+        self.vla_model = self.load_vla_model()
+        
+        self.current_image = None
+        self.current_command = None
+    
+    def image_callback(self, msg):
+        self.current_image = msg
+        self.execute_vla()
+    
+    def command_callback(self, msg):
+        self.current_command = msg.data
+        self.execute_vla()
+    
+    def execute_vla(self):
+        if self.current_image is None or self.current_command is None:
+            return
+        
+        # Run VLA model
+        action = self.vla_model.predict(
+            image=self.current_image,
+            command=self.current_command
+        )
+        
+        # Convert to joint trajectory
+        trajectory = self.action_to_trajectory(action)
+        
+        # Publish
+        self.action_pub.publish(trajectory)
+    
+    def load_vla_model(self):
+        # Load pre-trained VLA model
+        # This would use models like RT-2, PaLI-X, etc.
+        pass
+    
+    def action_to_trajectory(self, action):
+        # Convert VLA action to ROS JointTrajectory
+        pass
+```
+
+## Capstone Example: Autonomous Humanoid
+
+Combining all components for a complete system:
+
+```python
+class AutonomousHumanoid(Node):
+    def __init__(self):
+        super().__init__('autonomous_humanoid')
+        
+        # Initialize all components
+        self.voice_node = VoiceCommandNode()
+        self.planner_node = TaskPlannerNode()
+        self.vla_node = VLAControlNode()
+        self.navigator = HumanoidNavigator()
+        
+        self.get_logger().info('Autonomous humanoid system ready!')
+    
+    def execute_task(self, voice_command):
+        """
+        Complete pipeline:
+        1. Voice → Text (Whisper)
+        2. Text → Plan (GPT-4)
+        3. Plan → Actions (VLA)
+        4. Actions → Execution (ROS 2)
+        """
+        
+        # Step 1: Transcribe voice
+        text_command = self.voice_node.transcribe(voice_command)
+        
+        # Step 2: Generate plan
+        action_plan = self.planner_node.generate_plan(text_command)
+        
+        # Step 3 & 4: Execute each action
+        for action in action_plan:
+            if action['type'] == 'navigate':
+                self.navigator.navigate_to_goal(
+                    action['x'], action['y'], action['theta']
+                )
+            elif action['type'] == 'grasp':
+                self.vla_node.execute_grasp(action['object'])
+            elif action['type'] == 'release':
+                self.vla_node.execute_release()
+        
+        self.get_logger().info('Task completed!')
+```
+
+## Summary
+
+Vision-Language-Action models enable humanoid robots to:
+- Understand natural language commands via Whisper
+- Plan complex tasks using LLMs like GPT-4
+- Perceive environments with vision-language models
+- Execute actions through end-to-end VLA architectures
+
+This convergence of AI technologies is transforming humanoid robotics from pre-programmed systems to adaptive, intelligent agents.
+
+## References
+
+- Brohan, A., et al. (2023). RT-2: Vision-language-action models transfer web knowledge to robotic control. *arXiv preprint arXiv:2307.15818*.
+- Radford, A., et al. (2023). Robust speech recognition via large-scale weak supervision. *arXiv preprint arXiv:2212.04356*.

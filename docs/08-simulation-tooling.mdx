@@ -1,21 +1,280 @@
 ---
 id: simulation-tooling
-title: Simulation & Tooling
+title: "Simulation & Tooling"
 ---
 
 ## Overview
 
-_This chapter will provide an overview of robotics simulation platforms and tools for development and data generation._
+Simulation is essential for developing and testing humanoid robots safely and efficiently. This chapter covers Gazebo, NVIDIA Isaac Sim, Unity, and other simulation tools.
 
-## Robotics Simulators
+## Gazebo Classic vs. Gazebo (Ignition)
 
-_Content to be added: Comparison of robotics simulators: Gazebo, Isaac Sim, PyBullet._
+### Gazebo Classic
+- Legacy ROS 1 simulator
+- Wide plugin ecosystem
+- Being phased out
 
-## Synthetic Data Generation
+### Gazebo (Ignition/Gazebo Sim)
+- Modern architecture
+- Better performance
+- Native ROS 2 integration
+- Photorealistic rendering
 
-_Content to be added: Using simulation for synthetic data generation and training._
+## Setting Up Gazebo Simulation
 
-## Robot Operating System (ROS)
+### Robot Description (URDF/SDF)
 
-_Content to be added: ROS (Robot Operating System) as a middleware for robotics development._
+```xml
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <model name="humanoid_robot">
+    <link name="base_link">
+      <inertial>
+        <mass>50.0</mass>
+        <inertia>
+          <ixx>1.0</ixx>
+          <iyy>1.0</iyy>
+          <izz>1.0</izz>
+        </inertia>
+      </inertial>
+      
+      <visual name="visual">
+        <geometry>
+          <mesh><uri>model://humanoid/meshes/torso.dae</uri></mesh>
+        </geometry>
+      </visual>
+      
+      <collision name="collision">
+        <geometry>
+          <box><size>0.3 0.2 0.5</size></box>
+        </geometry>
+      </collision>
+    </link>
+    
+    <!-- Sensors -->
+    <sensor name="camera" type="camera">
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+        </image>
+      </camera>
+      <update_rate>30</update_rate>
+    </sensor>
+  </model>
+</sdf>
+```
 
+### Launch File
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription
+
+def generate_launch_description():
+    return LaunchDescription([
+        # Start Gazebo
+        IncludeLaunchDescription(
+            'path/to/gazebo.launch.py',
+            launch_arguments={'world': 'humanoid_world.sdf'}.items()
+        ),
+        
+        # Spawn robot
+        Node(
+            package='ros_gz_sim',
+            executable='create',
+            arguments=['-name', 'humanoid', '-file', 'humanoid.sdf'],
+        ),
+        
+        # Robot state publisher
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            parameters=[{'robot_description': robot_description}]
+        ),
+    ])
+```
+
+## NVIDIA Isaac Sim
+
+### Advantages
+- RTX ray tracing for photorealism
+- PhysX 5 for accurate physics
+- Synthetic data generation
+- Domain randomization
+
+### Basic Setup
+
+```python
+from omni.isaac.kit import SimulationApp
+
+# Start simulation
+simulation_app = SimulationApp({"headless": False})
+
+from omni.isaac.core import World
+from omni.isaac.core.robots import Robot
+
+# Create world
+world = World()
+
+# Add robot
+robot = world.scene.add(Robot(prim_path="/World/Humanoid", name="humanoid"))
+
+# Run simulation
+world.reset()
+for i in range(1000):
+    world.step(render=True)
+
+simulation_app.close()
+```
+
+## Unity for Robotics
+
+### Unity Robotics Hub
+- ROS-Unity integration
+- Perception tools
+- Simulation environments
+
+### Example: ROS Communication
+
+```csharp
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Geometry;
+
+public class RobotController : MonoBehaviour
+{
+    ROSConnection ros;
+    
+    void Start()
+    {
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.Subscribe<TwistMsg>("/cmd_vel", CmdVelCallback);
+    }
+    
+    void CmdVelCallback(TwistMsg msg)
+    {
+        // Move robot based on Twist message
+        transform.Translate(
+            msg.linear.x * Time.deltaTime,
+            0,
+            msg.linear.z * Time.deltaTime
+        );
+    }
+}
+```
+
+## Sim-to-Real Transfer
+
+### Domain Randomization
+
+```python
+import random
+
+def randomize_environment():
+    """Randomize simulation parameters"""
+    # Lighting
+    light_intensity = random.uniform(0.5, 2.0)
+    
+    # Object properties
+    friction = random.uniform(0.3, 0.9)
+    mass = random.uniform(0.8, 1.2)
+    
+    # Camera noise
+    noise_std = random.uniform(0.0, 0.05)
+    
+    return {
+        'light': light_intensity,
+        'friction': friction,
+        'mass': mass,
+        'noise': noise_std
+    }
+```
+
+### Reality Gap Mitigation
+- System identification
+- Adaptive control
+- Robust policy learning
+
+## Visualization Tools
+
+### RViz2
+
+```python
+# Launch RViz2 with config
+Node(
+    package='rviz2',
+    executable='rviz2',
+    arguments=['-d', 'humanoid_config.rviz']
+)
+```
+
+### Foxglove Studio
+- Web-based visualization
+- Custom layouts
+- Real-time data streaming
+
+## Debugging Tools
+
+### RQt Tools
+
+```bash
+# Node graph
+rqt_graph
+
+# Topic monitor
+rqt_topic
+
+# Service caller
+rqt_service_caller
+
+# Parameter reconfigure
+rqt_reconfigure
+```
+
+### Logging and Playback
+
+```bash
+# Record bag
+ros2 bag record -a
+
+# Play back
+ros2 bag play rosbag2_2024_01_01
+
+# Info
+ros2 bag info rosbag2_2024_01_01
+```
+
+## Performance Profiling
+
+### CPU Profiling
+
+```bash
+# Profile with perf
+perf record -g ros2 run my_package my_node
+perf report
+```
+
+### Memory Profiling
+
+```bash
+# Valgrind
+valgrind --tool=massif ros2 run my_package my_node
+```
+
+## Summary
+
+Simulation and tooling provide:
+- **Simulators**: Gazebo, Isaac Sim, Unity
+- **Sim-to-Real**: Domain randomization, system ID
+- **Visualization**: RViz2, Foxglove
+- **Debugging**: RQt tools, bag files
+- **Profiling**: CPU and memory analysis
+
+These tools accelerate development and reduce hardware testing time.
+
+## References
+
+- Koenig, N., & Howard, A. (2004). Design and use paradigms for Gazebo, an open-source multi-robot simulator. *IEEE/RSJ International Conference on Intelligent Robots and Systems*.
+- NVIDIA. (2023). Isaac Sim documentation. Retrieved from https://docs.omniverse.nvidia.com/isaacsim/

@@ -1,0 +1,271 @@
+---
+id: software-development
+title: "AI-Native Software Development for Robotics"
+---
+
+## Overview
+
+Modern robotics software development leverages AI-native tools and practices. This chapter covers development workflows, testing, simulation, and deployment strategies for humanoid robots.
+
+## Development Environment Setup
+
+### ROS 2 Workspace
+
+```bash
+# Create workspace
+mkdir -p ~/humanoid_ws/src
+cd ~/humanoid_ws
+
+# Clone packages
+cd src
+git clone https://github.com/your-org/humanoid_control.git
+git clone https://github.com/your-org/humanoid_perception.git
+
+# Install dependencies
+rosdep install --from-paths src --ignore-src -r -y
+
+# Build
+colcon build --symlink-install
+
+# Source
+source install/setup.bash
+```
+
+### Docker for Reproducibility
+
+```dockerfile
+FROM ros:humble
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    ros-humble-navigation2 \
+    ros-humble-slam-toolbox \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+# Copy workspace
+COPY . /workspace
+WORKDIR /workspace
+
+# Build
+RUN . /opt/ros/humble/setup.sh && \
+    colcon build
+
+CMD ["bash"]
+```
+
+## Testing Strategies
+
+### Unit Testing
+
+```python
+import unittest
+from humanoid_control.kinematics import ForwardKinematics
+
+class TestKinematics(unittest.TestCase):
+    def setUp(self):
+        self.fk = ForwardKinematics()
+    
+    def test_forward_kinematics(self):
+        joint_angles = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        end_effector_pose = self.fk.compute(joint_angles)
+        
+        # Check expected pose
+        self.assertAlmostEqual(end_effector_pose.x, 0.5, places=2)
+        self.assertAlmostEqual(end_effector_pose.y, 0.0, places=2)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Integration Testing
+
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+import time
+
+class TestNavigation(Node):
+    def __init__(self):
+        super().__init__('test_navigation')
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+    
+    def test_forward_motion(self):
+        """Test robot moves forward"""
+        msg = Twist()
+        msg.linear.x = 0.5
+        
+        # Publish for 2 seconds
+        for _ in range(20):
+            self.cmd_vel_pub.publish(msg)
+            time.sleep(0.1)
+        
+        # Check odometry (implementation needed)
+        # assert robot moved forward
+```
+
+### Simulation Testing
+
+- Test in Gazebo/Isaac Sim before hardware
+- Automated scenario testing
+- Regression testing for updates
+
+## Continuous Integration/Deployment
+
+### GitHub Actions Example
+
+```yaml
+name: ROS 2 CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@v0.6
+        with:
+          required-ros-distributions: humble
+      
+      - name: Build workspace
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build
+      
+      - name: Run tests
+        run: |
+          source install/setup.bash
+          colcon test
+          colcon test-result --verbose
+```
+
+## Code Quality
+
+### Linting and Formatting
+
+```bash
+# Python
+black src/
+flake8 src/
+mypy src/
+
+# C++
+clang-format -i src/**/*.cpp
+cpplint src/**/*.cpp
+```
+
+### Static Analysis
+
+```bash
+# ROS 2 specific
+ament_cpplint src/
+ament_flake8 src/
+```
+
+## Version Control Best Practices
+
+### Git Workflow
+
+```bash
+# Feature branch
+git checkout -b feature/new-controller
+
+# Make changes
+git add .
+git commit -m "Add PID controller for joint control"
+
+# Push and create PR
+git push origin feature/new-controller
+```
+
+### Semantic Versioning
+
+- MAJOR.MINOR.PATCH (e.g., 1.2.3)
+- MAJOR: Breaking changes
+- MINOR: New features (backward compatible)
+- PATCH: Bug fixes
+
+## Deployment Strategies
+
+### Edge Deployment
+
+```python
+# Optimize model for edge
+import torch
+import torch.quantization
+
+model = YourModel()
+model.eval()
+
+# Quantization
+model_quantized = torch.quantization.quantize_dynamic(
+    model, {torch.nn.Linear}, dtype=torch.qint8
+)
+
+# Export to ONNX
+torch.onnx.export(model_quantized, dummy_input, "model.onnx")
+```
+
+### Over-the-Air (OTA) Updates
+
+```bash
+# Create update package
+tar -czf update_v1.2.0.tar.gz install/
+
+# Deploy to robot
+scp update_v1.2.0.tar.gz robot@192.168.1.100:/tmp/
+ssh robot@192.168.1.100 "cd /opt/humanoid && tar -xzf /tmp/update_v1.2.0.tar.gz"
+```
+
+## Monitoring and Logging
+
+### ROS 2 Logging
+
+```python
+self.get_logger().debug('Detailed debug info')
+self.get_logger().info('Normal operation')
+self.get_logger().warn('Warning message')
+self.get_logger().error('Error occurred')
+self.get_logger().fatal('Critical failure')
+```
+
+### Performance Monitoring
+
+```python
+import time
+
+class PerformanceMonitor(Node):
+    def __init__(self):
+        super().__init__('performance_monitor')
+        self.timer = self.create_timer(1.0, self.log_performance)
+        self.loop_times = []
+    
+    def log_performance(self):
+        if self.loop_times:
+            avg_time = sum(self.loop_times) / len(self.loop_times)
+            self.get_logger().info(f'Avg loop time: {avg_time*1000:.2f}ms')
+            self.loop_times = []
+```
+
+## Summary
+
+AI-native robotics development requires:
+- **Environment**: ROS 2 workspaces, Docker containers
+- **Testing**: Unit, integration, simulation tests
+- **CI/CD**: Automated builds and deployments
+- **Quality**: Linting, formatting, static analysis
+- **Deployment**: Edge optimization, OTA updates
+- **Monitoring**: Logging and performance tracking
+
+## References
+
+- Open Robotics. (2023). ROS 2 documentation. Retrieved from https://docs.ros.org/
+- Gerkey, B., et al. (2003). The player/stage project: Tools for multi-robot and distributed sensor systems. *International Conference on Advanced Robotics*.
