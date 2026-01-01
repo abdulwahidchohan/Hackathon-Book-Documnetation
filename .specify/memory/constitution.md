@@ -1,73 +1,55 @@
-<!-- Sync Impact Report -->
-<!--
-Version change: 0.0.0 -> 1.0.0
-Modified principles: None (initial creation)
-Added sections: Key Standards, Constraints, Success Criteria
-Removed sections: None
-Templates requiring updates:
-  - .specify/templates/plan-template.md: ⚠ pending
-  - .specify/templates/spec-template.md: ⚠ pending
-  - .specify/templates/tasks-template.md: ⚠ pending
-  - .specify/templates/commands/sp.constitution.md: ✅ updated
-  - README.md: ⚠ pending
-Follow-up TODOs: None
--->
-# AI Humanoid Robotics Book Constitution
+# [PROJECT_NAME] Constitution
+<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles
 
-### Accuracy & Verification
-All technical content must be validated against authoritative sources (IEEE, ACM, robotics research papers, official documentation).
+### [PRINCIPLE_1_NAME]
+<!-- Example: I. Library-First -->
+[PRINCIPLE_1_DESCRIPTION]
+<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
 
-### Clarity for Target Audience
-Audience: Developers, AI researchers, robotics engineers.
-Language: Professional yet accessible, avoiding unnecessary jargon.
+### [PRINCIPLE_2_NAME]
+<!-- Example: II. CLI Interface -->
+[PRINCIPLE_2_DESCRIPTION]
+<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
 
-### Reproducibility
-All examples, code snippets, and workflows must be executable and tested.
+### [PRINCIPLE_3_NAME]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[PRINCIPLE_3_DESCRIPTION]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### Rigor & Reliability
-Prefer peer-reviewed sources and official standards for robotics and AI.
+### [PRINCIPLE_4_NAME]
+<!-- Example: IV. Integration Testing -->
+[PRINCIPLE_4_DESCRIPTION]
+<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
 
-## Key Standards
+### [PRINCIPLE_5_NAME]
+<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
+[PRINCIPLE_5_DESCRIPTION]
+<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-### Source Verification
-Minimum 50% of references from peer-reviewed journals or official robotics standards.
+### [PRINCIPLE_6_NAME]
 
-### Citation Format
-APA style for all references.
 
-### Plagiarism Policy
-0% tolerance; all content must pass plagiarism checks before publishing.
+[PRINCIPLE__DESCRIPTION]
 
-### Writing Quality
-Flesch-Kincaid readability score: Grade 10–12.
+## [SECTION_2_NAME]
+<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
-### Technical Depth
-Include diagrams, architecture flowcharts, and code examples for clarity.
+[SECTION_2_CONTENT]
+<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
 
-## Constraints
+## [SECTION_3_NAME]
+<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
 
-### Book Structure
-Chapters: Introduction, AI Fundamentals, Robotics Hardware, Humanoid Design, AI-Native Software Development, Ethics & Future Trends.
-
-### Word Count
-5,000–7,000 words total.
-
-### Minimum Sources
-At least 15 credible references.
-
-### Format
-Markdown-based (Docusaurus), deployed on GitHub Pages.
-
-### Integration
-Use Spec-Kit Plus for structured content and Claude Code for AI-assisted writing.
+[SECTION_3_CONTENT]
+<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
 
 ## Governance
-Constitution supersedes all other practices; Amendments require documentation, approval, migration plan.
-All claims traceable to verified sources.
-Zero plagiarism detected.
-Passes fact-checking and readability review.
-Fully deployable on GitHub Pages with functional navigation and search.
+<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-06 | **Last Amended**: 2025-12-06
+[GOVERNANCE_RULES]
+<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+
+**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
