@@ -20,19 +20,28 @@ export default function TranslateButton() {
 
         setTranslating(true);
         try {
-            const response = await fetch(getApiEndpoint('/api/translate'), {
+            const apiUrl = getApiEndpoint('/api/translate');
+            console.log('Translating via:', apiUrl);
+            
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: textToTranslate }),
             });
 
-            if (!response.ok) throw new Error('Backend error');
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Backend error (${response.status}): ${errorText}`);
+            }
 
             const data = await response.json();
             setUrduText(data.translated_text);
         } catch (error) {
             console.error('Translation failed:', error);
-            alert('Translation failed. Make sure the backend is running.');
+            const errorMessage = error instanceof Error 
+                ? `Translation failed: ${error.message}` 
+                : 'Translation failed. Make sure the backend is running and accessible.';
+            alert(errorMessage);
         } finally {
             setTranslating(false);
         }

@@ -1,23 +1,42 @@
-# Node.js / Docusaurus
+# Dependencies
 node_modules/
-dist/
-build/
-.docusaurus/
-.cache/
-*.log
-.env*
-
-# Python
 __pycache__/
-*.pyc
-.venv/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environment variables
+.env
+.venv
+env/
 venv/
+ENV/
+
+# Build outputs
+build/
+dist/
 *.egg-info/
 
-# Universal
-.DS_Store
-Thumbs.db
-*.tmp
-*.swp
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Backend specific
+backend/embeddings_cache.json
+backend/.env
+
+# Frontend specific
+.docusaurus/
+.cache/
