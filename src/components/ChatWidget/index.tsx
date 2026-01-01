@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './ChatWidget.module.css';
+import { getApiEndpoint } from '@site/src/utils/apiConfig';
 
 interface Message {
     role: string;
@@ -33,7 +34,7 @@ export default function ChatWidget() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/api/chat', {
+            const response = await fetch(getApiEndpoint('/api/chat'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -52,7 +53,7 @@ export default function ChatWidget() {
         } catch (error) {
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: 'Sorry, I couldn\'t connect to the backend. Make sure the server is running at http://localhost:8000'
+                content: `Sorry, I couldn't connect to the backend. Please check if the server is running.`
             }]);
         } finally {
             setIsLoading(false);

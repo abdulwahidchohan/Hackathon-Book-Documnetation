@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './TranslateButton.module.css';
+import { getApiEndpoint } from '@site/src/utils/apiConfig';
 
 export default function TranslateButton() {
     const [translating, setTranslating] = useState(false);
@@ -19,7 +20,7 @@ export default function TranslateButton() {
 
         setTranslating(true);
         try {
-            const response = await fetch('http://localhost:8000/api/translate', {
+            const response = await fetch(getApiEndpoint('/api/translate'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: textToTranslate }),
